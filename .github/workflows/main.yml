@@ -33,7 +33,10 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v1
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-
+      
+      - name: OCP-install
+        uses: redhat-actions/oc-installer@v1.2
+        
       - name: oc-login
         uses: redhat-actions/oc-login@v1.3
         with:

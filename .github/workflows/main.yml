@@ -5,7 +5,7 @@ on:
     branches: [ "test" ]
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: svartastorken/automation-test
 
 jobs:
   build_push:
@@ -23,5 +23,12 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: building image
-        run: docker build -f Containerfile .
+      - name: building and pushing
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: .
+          file: ./Containerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:V1
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

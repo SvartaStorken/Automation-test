@@ -6,6 +6,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: svartastorken/automation-test
+  OPENSHIFT_NAMESPACE: test-miljo1
 
 jobs:
   build_push:
@@ -30,5 +31,21 @@ jobs:
           file: ./Containerfile
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:V1
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v1
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: oc-login
+        uses: redhat-actions/oc-login@v1.3
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: Deployment
+        run: |
+          oc apply -f kubernetes/deployment.yaml
+      - name: rollout Image
+        run: |
+          oc rollout restart deployment/automation-test-app
+      

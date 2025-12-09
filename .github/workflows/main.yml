@@ -3,6 +3,9 @@ name: Container build
 on:
   push:
     branches: [ "test" ]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:

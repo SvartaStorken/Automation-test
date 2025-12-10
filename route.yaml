@@ -7,7 +7,7 @@ spec:
     kind: Service
     name: automation-test-service
   port:
-    targetPort:
+    targetPort: http  # Vi pekar på namnet "http" som vi satte i servicen
   tls:
     termination: edge
-    insecureEdgeTerminationPolicy:
+    insecureEdgeTerminationPolicy: Allow

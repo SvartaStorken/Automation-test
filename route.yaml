@@ -7,6 +7,7 @@ spec:
     kind: Service
     name: automation-test-service
   port:
-    targetPort: 8080
+    targetPort:
   tls:
     termination: edge
+    insecureEdgeTerminationPolicy:

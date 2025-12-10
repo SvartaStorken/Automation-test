@@ -45,11 +45,11 @@ jobs:
           insecure_skip_tls_verify: true
           namespace: ${{ env.OPENSHIFT_NAMESPACE }}
 
-      - name: Deployment
+      - name: Deployment of yaml files
         run: |
           oc apply -f deployment.yaml
-      - name: Service
-        run: oc apply -f service.yaml
+          oc apply -f service.yaml
+          oc apply -f route.yaml
       - name: rollout Image
         run: |
           oc rollout restart deployment/automation-test-app

@@ -48,6 +48,8 @@ jobs:
       - name: Deployment
         run: |
           oc apply -f deployment.yaml
+      - name: Service
+        run: apply -f service.yaml
       - name: rollout Image
         run: |
           oc rollout restart deployment/automation-test-app

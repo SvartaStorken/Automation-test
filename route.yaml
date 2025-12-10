@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: automation-test-route
+spec:
+  to:
+    kind: Service
+    name: automation-test-service
+  port:
+    targetPort: http  # Vi pekar på namnet "http" som vi satte i servicen
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Allow

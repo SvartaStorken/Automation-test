@@ -3,12 +3,54 @@ name: Container build
 on:
   push:
     branches: [ "test" ]
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: svartastorken/automation-test
+  OPENSHIFT_NAMESPACE: test-miljo1
 
 jobs:
-  build:
+  build_push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
     steps:
       - name: checkout code
         uses: actions/checkout@v4
-      - name: building image
-        run: docker build -f Containerfile .
+      - name: Log in registry
+        uses: docker/login-action@v3.6.0
+        with: 
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: building and pushing
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: .
+          file: ./Containerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:v1
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      
+      - name: OCP-install
+        uses: redhat-actions/oc-installer@v1.2
+        
+      - name: oc-login
+        uses: redhat-actions/oc-login@v1.3
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
+          insecure_skip_tls_verify: true
+          namespace: ${{ env.OPENSHIFT_NAMESPACE }}
+
+      - name: Deployment of yaml files
+        run: |
+          oc apply -f deployment.yaml
+          oc apply -f service.yaml
+          oc apply -f route.yaml
+      - name: rollout Image
+        run: |
+          oc rollout restart deployment/automation-test-app
+      

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: automation-test-app
+  labels:
+    app: automation-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: automation-test
+  template:
+    metadata:
+      labels:
+        app: automation-test
+    spec:
+      containers:
+        - name: nginx-server
+          image: ghcr.io/svartastorken/automation-test:latest
+          ports:
+            - containerPort: 8080
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "64Mi"  # Vi ber om lite minne (64 Megabyte)
+              cpu: "250m"     # Vi ber om lite CPU (0.25 kärna)
+            limits:
+              memory: "128Mi" # Vi får max använda 128 Megabyte
+              cpu: "500m"     # Vi får max använda 0.5 kärna
